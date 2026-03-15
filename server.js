@@ -8,8 +8,8 @@ const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const VIDEOS_DIR = path.resolve('C:\\HIS\\WHO');
-const VIDEOS_DIR2 = path.resolve('C:\\HIS\\WHO2');
+const VIDEOS_DIR = path.join(__dirname, 'WHO');
+const VIDEOS_DIR2 = path.join(__dirname, 'WHO2');
 
 app.use('/videos', express.static(VIDEOS_DIR));
 app.use(express.static(path.join(__dirname, 'public')));
