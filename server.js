@@ -9,7 +9,7 @@ const upload = multer({ dest: path.join(__dirname, 'uploads') });
 const { google } = require('googleapis');
 
 const auth = new google.auth.GoogleAuth({
-  keyFile: path.join(__dirname, 'service-account.json'),
+  credentials: JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT),
   scopes: ['https://www.googleapis.com/auth/drive.file']
 });
 
