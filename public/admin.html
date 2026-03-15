@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>影片管理後台</title>
+    <link rel="stylesheet" href="/style.css" />
+    <!-- 新增：下拉選單樣式 -->
+    <style>
+      /* 調整 label 與下拉外觀 */
+      form label { display:block; margin-bottom:12px; font-weight:600; }
+      #dept { 
+        -webkit-appearance: none; -moz-appearance: none; appearance: none;
+        width: 87%; max-width: 87%;
+        padding: 15px 40px 15px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(10,40,90,0.08);
+        background: linear-gradient(180deg,#fff,#f7fbff);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+        font-size: 14px;
+        color: #123;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path fill='%230b74da' d='M0 0l6 8 6-8z'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 12px 8px;
+      }
+      /* option 內文調整 */
+      #dept option { padding:8px; }
+      /* 小螢幕微調 */
+      @media (max-width:480px){
+        #dept { padding-right:36px; font-size:13px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="adminApp">
+      <header>
+        <button id="menuToggle">☰</button>
+        <div id="headerInfo">後台管理 : <span id="adminName">Admin</span></div>
+        <button id="logoutBtn">登出</button>
+      </header>
+
+      <div class="view centerView" style="padding-top:72px">
+        <div class="card" style="width:520px; height:auto;">
+          <h1>影片管理後台</h1>
+          <p style="color:#5a627b; margin-top:4px; margin-bottom:16px">上傳圖片並產生短片，結果會存放於 WHO 資料夾</p>
+
+          <form id="genForm">
+            
+
+            <label>存放資料夾
+              <select name="source" id="source">
+                <option value="WHO" selected>WHO（預設）</option>
+                <option value="WHO2">WHO2</option>
+              </select>
+            </label>
+
+            <label>科別
+              <select name="dept" id="dept">
+                <option value="">無（放根目錄）</option>
+                <option value="感染科">感染科</option>
+                <option value="手術科">手術科</option>
+                <option value="護士科">護士科</option>
+              </select>
+            </label>
+            
+            <label>圖片
+              <input type="file" name="image" id="image" accept="image/*" required />
+            </label>
+
+            <label>指令 / 說明（選填）
+               <input type="text" name="prompt" id="prompt" placeholder="描述想要的影片" /> 
+            </label>
+
+            <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+              <button type="submit" class="primary">產生影片</button>
+              <button id="backToIndex" type="button" class="link">回到首頁</button>
+            </div>
+          </form>
+
+          <div id="result" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById('genForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData();
+        const file = document.getElementById('image').files[0];
+        if (!file) return alert('請選圖片');
+        fd.append('image', file);
+        fd.append('dept', document.getElementById('dept').value);
+        fd.append('source', document.getElementById('source').value);
+        fd.append('prompt', document.getElementById('prompt').value);
+
+        const resEl = document.getElementById('result');
+        resEl.textContent = '產生中...';
+
+        try {
+          const r = await fetch('/api/admin/generate-video', { method: 'POST', body: fd });
+          const j = await r.json();
+          if (j.ok) {
+            resEl.innerHTML = '成功<br><a href="' + j.url + '" target="_blank">' + j.url + '</a>';
+          } else {
+            resEl.textContent = '失敗：' + (j.message || JSON.stringify(j));
+          }
+        } catch (e) {
+          resEl.textContent = '錯誤：' + e.toString();
+        }
+      });
+
+      document.getElementById('backToIndex').addEventListener('click', () => {
+        window.location.href = '/';
+      });
+    </script>
+  </body>
+</html>

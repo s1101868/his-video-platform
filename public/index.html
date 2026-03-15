@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>醫療影片平台</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- 登入畫面（只輸入名稱） -->
+      <div id="loginView" class="view centerView">
+        <div class="card">
+          <h1>醫療教育平台</h1>
+          <label>使用者名稱
+            <input id="username" type="text" placeholder="輸入名稱" />
+          </label>
+          <label>密碼
+            <input id="password" type="password" placeholder="輸入密碼" />
+          </label>
+          <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+            <button id="loginBtn" class="primary">登入</button>
+            <button id="showRegisterBtn" class="link">註冊</button>
+          </div>
+          <div id="loginError" class="error hidden"></div>
+        </div>
+      </div>
+
+      <!-- 新增：註冊畫面 -->
+      <div id="registerView" class="view centerView hidden">
+        <div class="card">
+          <h1>註冊帳號</h1>
+          <label>使用者名稱
+            <input id="regUsername" type="text" placeholder="輸入名稱" />
+          </label>
+          <label>密碼
+            <input id="regPassword" type="password" placeholder="輸入密碼" />
+          </label>
+          <label>確認密碼
+            <input id="regPasswordConfirm" type="password" placeholder="再次輸入密碼" />
+          </label>
+          <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+            <button id="registerBtn" class="primary">註冊</button>
+            <button id="backToLoginFromRegister" class="link">返回登入</button>
+          </div>
+          <div id="registerError" class="error hidden"></div>
+        </div>
+      </div>
+
+      <!-- 選科別畫面（按鈕） -->
+<div id="deptView" class="view hidden centerView">
+  <div class="dept-card">
+    <h2 class="dept-title">請選擇科別</h2>
+    <!-- 加上 id="deptButtons" 這裡 -->
+    <div id="deptButtons" class="dept-selection-container">
+      <button class="dept-selection-btn dept-selection-infect" data-dept="感染科">
+        <span class="dept-selection-icon">🦠</span>
+        <span class="dept-selection-name">感染科</span>
+        <span class="dept-selection-desc">5大洗手時機影片</span>
+      </button>
+      
+      <button class="dept-selection-btn dept-selection-surgery" data-dept="手術科">
+        <span class="dept-selection-icon">🔪</span>
+        <span class="dept-selection-name">手術科</span>
+        <span class="dept-selection-desc">5大洗手時機影片</span>
+      </button>
+      
+      <button class="dept-selection-btn dept-selection-nurse" data-dept="護士科">
+        <span class="dept-selection-icon">💉</span>
+        <span class="dept-selection-name">護士科</span>
+        <span class="dept-selection-desc">5大洗手時機影片</span>
+      </button>
+    </div>
+    
+    <button id="backToLogin" class="link">返回登入</button>
+  </div>
+</div>
+
+
+
+
+
+<!-- 影片播放畫面 -->
+  <div id="playerView" class="view hidden">
+    <header>
+      <button id="menuToggle">☰</button>
+      <div id="headerInfo">科別 : <span id="selectedDept"></span> 使用者 : <span id="selectedUser"></span></div>
+      <button id="logoutBtn">登出</button>
+    </header>
+    <div class="container">
+      <aside id="sidebar" class="collapsed">
+        <h3>影片清單</h3>
+        <ul id="videoList"></ul>
+      </aside>
+      <main id="mainArea">
+        <h2 id="videoTitle">尚未選擇影片</h2>
+        <video id="videoPlayer" controls width="800" height="450">
+          您的瀏覽器不支援影片播放。
+        </video>
+
+        <!-- 純影片模式 → 全部播放完才出現 -->
+        <button id="goToQuizMode" class="primary hidden" style="margin-top:20px">
+          進入影片與測驗模式
+        </button>
+
+        <!-- 測驗區塊 -->
+        <section id="quizArea" class="hidden" style="margin-top:20px">
+          <h3>測驗</h3>
+          <div id="quizContent"></div>
+          <div id="quizResult" class="hidden"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+  </div>
+    <script src="/app.js"></script>
+  </body>
+</html>
