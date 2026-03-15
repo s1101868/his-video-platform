@@ -1,3 +1,4 @@
+require('dotenv').config(); // <- 新增：讀取 .env
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
