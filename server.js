@@ -238,7 +238,7 @@ app.post('/api/admin/generate-video', upload.single('image'), (req, res) => {
     // 使用 ffmpeg 將圖片轉成短影片（5 秒 mp4），並確保寬/高為偶數
     const outputName = destName.replace(path.extname(destName), '.mp4');
     const outputPath = path.join(destDir, outputName);
-
+    console.log('ffmpeg will save video to:', outputPath);
     const ffargs = [
       '-y',
       '-loop', '1',
