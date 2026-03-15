@@ -6,26 +6,26 @@ const { spawn } = require('child_process');
 const multer = require('multer');
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
-const { google } = require('googleapis');
+// const { google } = require('googleapis');
 
-const auth = new google.auth.GoogleAuth({
-  credentials: JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT),
-  scopes: ['https://www.googleapis.com/auth/drive.file']
-});
+// const auth = new google.auth.GoogleAuth({
+//   credentials: JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT),
+//   scopes: ['https://www.googleapis.com/auth/drive.file']
+// });
 
-async function uploadToDrive(filePath, fileName) {
-  const drive = google.drive({ version: 'v3', auth });
-  const fileMetadata = { name: fileName };
-  const media = { mimeType: 'video/mp4', body: fs.createReadStream(filePath) };
+// async function uploadToDrive(filePath, fileName) {
+//   const drive = google.drive({ version: 'v3', auth });
+//   const fileMetadata = { name: fileName };
+//   const media = { mimeType: 'video/mp4', body: fs.createReadStream(filePath) };
   
-  const res = await drive.files.create({
-    resource: fileMetadata,
-    media: media,
-    fields: 'id, webContentLink, webViewLink'
-  });
+//   const res = await drive.files.create({
+//     resource: fileMetadata,
+//     media: media,
+//     fields: 'id, webContentLink, webViewLink'
+//   });
 
-  return res.data.webContentLink; // 可直接下載/播放的 URL
-}
+//   return res.data.webContentLink; // 可直接下載/播放的 URL
+// }
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -276,27 +276,25 @@ app.post('/api/admin/generate-video', upload.single('image'), (req, res) => {
     ff.stdout.on('data', d => ffout += d.toString());
     ff.stderr.on('data', d => fferr += d.toString());
 
-    ff.on('close', async (code) => {
+    ff.on('close', (code) => {
   if (code !== 0) {
     console.error('ffmpeg failed:', code, fferr);
-    return res.status(500).json({ ok: false, message: 'ffmpeg_failed', detail: fferr });
+    const fallbackUrl = dept
+      ? `${urlPrefix}${encodeURIComponent(dept)}/${encodeURIComponent(destName)}`
+      : `${urlPrefix}${encodeURIComponent(destName)}`;
+    return res.status(500).json({ ok: false, message: 'ffmpeg_failed', detail: fferr, fileUrl: fallbackUrl });
   }
 
-  try {
-    // 上傳影片到 Google Drive
-    const driveUrl = await uploadToDrive(outputPath, outputName);
+  const videoUrl = dept
+    ? `${urlPrefix}${encodeURIComponent(dept)}/${encodeURIComponent(outputName)}`
+    : `${urlPrefix}${encodeURIComponent(outputName)}`;
 
-    // 刪除本地暫存檔案
-    fs.unlink(destPath, () => {});
-    fs.unlink(outputPath, () => {});
-
-    return res.json({ ok: true, url: driveUrl });
-  } catch (e) {
-    console.error('Google Drive upload failed:', e);
-    return res.status(500).json({ ok: false, message: 'drive_upload_failed', detail: e.message });
-  }
-
-    });
+  // 刪除原始圖片檔案，只保留產生的影片
+  fs.unlink(destPath, (uerr) => {
+    if (uerr) console.warn('failed to remove original image', uerr);
+    return res.json({ ok: true, url: videoUrl });
+  });
+});
   });
 });
 
