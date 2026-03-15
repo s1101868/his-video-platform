@@ -302,6 +302,30 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+
+
+// --- 新增：刪除影片 API ---
+app.delete('/api/admin/delete-video', (req, res) => {
+  const { dept, filename, source } = req.body;
+  if (!filename) return res.status(400).json({ ok: false, message: '請提供檔名' });
+
+  let dir;
+  if (source === 'WHO2') {
+    dir = dept ? getVideosDir2ByDept(dept) : VIDEOS_DIR2;
+  } else {
+    dir = dept ? getVideosDirByDept(dept) : VIDEOS_DIR;
+  }
+
+  const filePath = path.join(dir, filename);
+  if (!fs.existsSync(filePath)) return res.status(404).json({ ok: false, message: '檔案不存在' });
+
+  fs.unlink(filePath, (err) => {
+    if (err) return res.status(500).json({ ok: false, message: '刪除失敗', detail: err.message });
+    return res.json({ ok: true, message: '影片已刪除' });
+  });
+});
+
+// --- 啟動伺服器 ---
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log(`Serving videos from ${VIDEOS_DIR}`);
