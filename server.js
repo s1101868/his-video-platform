@@ -8,8 +8,24 @@ const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const VIDEOS_DIR = path.join(__dirname, 'WHO');
-const VIDEOS_DIR2 = path.join(__dirname, 'WHO2');
+let VIDEOS_DIR, VIDEOS_DIR2;
+
+if (process.platform === 'win32') {
+  // Windows 本機
+  VIDEOS_DIR = 'C:\\HIS\\WHO';
+  VIDEOS_DIR2 = 'C:\\HIS\\WHO2';
+} else {
+  // Linux / Render
+  VIDEOS_DIR = path.join(__dirname, 'WHO');
+  VIDEOS_DIR2 = path.join(__dirname, 'WHO2');
+}
+
+// 確保資料夾存在
+fs.mkdirSync(VIDEOS_DIR, { recursive: true });
+fs.mkdirSync(VIDEOS_DIR2, { recursive: true });
+
+console.log('VIDEOS_DIR:', VIDEOS_DIR);
+console.log('VIDEOS_DIR2:', VIDEOS_DIR2);
 
 app.use('/videos', express.static(VIDEOS_DIR));
 app.use(express.static(path.join(__dirname, 'public')));
