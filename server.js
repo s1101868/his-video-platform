@@ -295,7 +295,7 @@ app.post('/api/admin/generate-video', upload.single('image'), (req, res) => {
     console.error('Google Drive upload failed:', e);
     return res.status(500).json({ ok: false, message: 'drive_upload_failed', detail: e.message });
   }
-});
+
     });
   });
 });
