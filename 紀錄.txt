@@ -1,3 +1,2 @@
-$env:GEMINI_API_KEY="AIzaSyCA5V8rzyd7fhZW5MApTq5CnZbz5T_5c2c"
 npm start
 後台管理http://localhost:3000/admin.html
