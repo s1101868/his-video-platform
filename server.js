@@ -73,8 +73,8 @@ app.post('/api/register', (req, res) => {
 // const fs = require('fs');
 
 function getVideosDirByDept(dept) {
-  // 對應科別資料夾
-  const baseDir = 'C:\\HIS\\WHO';
+  const baseDir = VIDEOS_DIR;
+
   switch(dept) {
     case '感染科':
       return path.join(baseDir, '感染科');
@@ -83,21 +83,22 @@ function getVideosDirByDept(dept) {
     case '護士科':
       return path.join(baseDir, '護士科');
     default:
-      return baseDir; // fallback
+      return baseDir;
   }
 }
 
 function getVideosDir2ByDept(dept) {
-  const baseDir2 = 'C:\\HIS\\WHO2';
+  const baseDir = VIDEOS_DIR2;
+
   switch(dept) {
     case '感染科':
-      return path.join(baseDir2, '感染科');
+      return path.join(baseDir, '感染科');
     case '手術科':
-      return path.join(baseDir2, '手術科');
+      return path.join(baseDir, '手術科');
     case '護士科':
-      return path.join(baseDir2, '護士科');
+      return path.join(baseDir, '護士科');
     default:
-      return baseDir2;
+      return baseDir;
   }
 }
 app.get('/api/videos', (req, res) => {
@@ -121,7 +122,7 @@ app.get('/api/videos', (req, res) => {
 });
 
 // 靜態路徑對應科別
-app.use('/videos', express.static(path.join('C:\\HIS\\WHO')));
+
 
 app.get('/api/videos2', (req, res) => {
   const dept = req.query.dept; // 新增科別參數
